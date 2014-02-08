@@ -13,13 +13,27 @@
 - (void)localizeFromNib {
 
     //Replace text with localizable version
-    NSArray *states = @[@(UIControlStateNormal), @(UIControlStateHighlighted), @(UIControlStateDisabled), @(UIControlStateSelected), @(UIControlStateApplication)];
-    for (NSNumber *state in states) {
+    //and preserve the states without title or localize a state twice
+	NSString *normalTitle = [self titleForState:UIControlStateNormal];
+	if (normalTitle.length > 0)
+	{
+		[self setTitle:[[NSBundle mainBundle] localizedStringForKey:normalTitle value:@"" table:nil] forState:UIControlStateNormal];
+	}
+
+    NSArray *states = @[@(UIControlStateHighlighted), @(UIControlStateDisabled), @(UIControlStateSelected), @(UIControlStateApplication)];
+    for (NSNumber *state in states)
+	{
         NSString *title = [self titleForState:state.integerValue];
-        if (title.length > 0) {
-            [self setTitle:[[NSBundle mainBundle] localizedStringForKey:title value:@"" table:nil] forState:state.integerValue];
+        if (title.length > 0)
+		{
+			NSString *tempTitle = [[NSBundle mainBundle] localizedStringForKey:title value:@"" table:nil];
+			if(![tempTitle isEqualToString:[self titleForState:state.integerValue]])
+			{
+				[self setTitle:[[NSBundle mainBundle] localizedStringForKey:title value:@"" table:nil] forState:state.integerValue];
+			}
         }
     }
+
 }
 
 @end
